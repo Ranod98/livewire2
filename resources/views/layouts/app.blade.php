@@ -43,6 +43,10 @@
 
         <script src="{{ asset('js/app.js') }}" defer></script>
         @livewireScripts
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+        </script>
+        ...
+        <x-livewire-alert::scripts />
 
     </body>
 </html>
