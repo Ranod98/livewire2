@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -71,6 +72,36 @@ class Posts extends Component
     }
 
 
+    public function update(){
+        $this->validate();
+        $post = Post::findOrFail($this->post_id);
+
+
+        if ($this->post_image != '') {
+            if ($post->image != '') {
+                if (File::exists('images/'.$post->image)) {
+                    unlink('images/'.$post->image);
+                    $this->post_image_name = md5($this->post_image . microtime()) .'.'.$this->post_image->extension();
+                    $this->post_image->storeAs('/',$this->post_image_name,'images');
+
+                }
+            }
+        }
+
+        $post->update($this->modelData());
+        $this->modelFormReset();
+        $this->alert('success', 'Update World!', [
+            'position' =>  'top-end',
+            'timer' =>  3000,
+            'toast' =>  true,
+            'text' =>  '',
+            'confirmButtonText' =>  'Ok',
+            'cancelButtonText' =>  'Cancel',
+            'showCancelButton' =>  true,
+            'showConfirmButton' =>  false,
+        ]);
+    }
+
 
     public function showUpdate($id){
         $this->post_id = $id;
@@ -89,7 +120,33 @@ class Posts extends Component
     }
 
 
+    public function destroy($id){
 
+        $post = Post::findOrFail($id);
+        if ($this->post_image != '') {
+            if ($post->image != '') {
+                if (File::exists('images/'.$post->image)) {
+                    unlink('images/'.$post->image);
+                }
+            }
+        }//end if
+
+        $post->delete();
+        $this->alert('success', 'Update World!', [
+            'position' =>  'top-end',
+            'timer' =>  3000,
+            'toast' =>  true,
+            'text' =>  '',
+            'confirmButtonText' =>  'Ok',
+            'cancelButtonText' =>  'Cancel',
+            'showCancelButton' =>  true,
+            'showConfirmButton' =>  false,
+        ]);
+
+
+
+
+    }
 
 
 
@@ -97,8 +154,8 @@ class Posts extends Component
     public function rules(){
         return [
             'title' => ['required'],
-            'slug' => ['required',Rule::unique('posts','slug')],
-            'post_image' => ['required','max:1024'],
+            'slug' => ['required',Rule::unique('posts','slug')->ignore($this->post_id)],
+            'post_image' => [Rule::requiredIf(!$this->post_id),'max:1024'],
         ];
     }//emd
 
