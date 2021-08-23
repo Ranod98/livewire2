@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'],function (){
         return view('posts');
     })->name('posts');
 
-});
 
+});
+Route::get('/{slug}', \App\Http\Livewire\ShowPost::class)->name('showPost');
 require __DIR__.'/auth.php';

@@ -118,7 +118,7 @@
             <tr>
             <td class="">{{$post->id}}</td>
             <td class=""><img src="{{asset('images/'.$post->image)}}" class="img-thumbnail" width="80" alt="{{$post->title}}"></td>
-            <td class="">{{$post->title}}</td>
+            <td class=""><a href="{{route('showPost',$post->slug)}}">{{$post->title}}</a></td>
             <td class="">
                 <a class="btn btn-primary" wire:click="showUpdate({{$post->id}})">edit</a>
                 <form method="post" wire:submit.prevent="destroy({{$post->id}})">
